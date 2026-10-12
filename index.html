@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R-II Builders | Admin Management System Demo</title>
+  <style>
+    :root {
+      --navy: #102a43;
+      --navy-deep: #071a2d;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
+      --gold: #f5ae18;
+      --gold-soft: #fff5d8;
+      --ink: #172b4d;
+      --muted: #6b7c93;
+      --line: #e5eaf0;
+      --surface: #ffffff;
+      --canvas: #f5f7fb;
+      --green: #159570;
+      --red: #d64545;
+      --shadow: 0 18px 50px rgba(16, 42, 67, .12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    button { font: inherit; }
+
+    .topbar {
+      align-items: center;
+      background: rgba(7, 26, 45, .96);
+      color: #fff;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      padding: 15px 4vw;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand { align-items: center; display: flex; gap: 12px; }
+    .brand img { background: #fff; border-radius: 9px; height: 36px; object-fit: contain; padding: 4px; width: 36px; }
+    .brand strong { display: block; font-size: 14px; letter-spacing: .02em; }
+    .brand span { color: #a9bdd1; display: block; font-size: 11px; margin-top: 2px; }
+    .top-actions { align-items: center; display: flex; gap: 10px; }
+    .top-actions button, .pager button {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      padding: 8px 13px;
+    }
+    .top-actions button:hover, .pager button:hover { background: rgba(255,255,255,.12); }
+    .progress { background: rgba(255,255,255,.16); height: 4px; left: 0; position: absolute; top: 0; width: 100%; }
+    .progress i { background: var(--gold); display: block; height: 100%; transition: width .3s ease; width: 20%; }
+
+    .deck { margin: 0 auto; max-width: 1220px; padding: 38px 24px 80px; }
+    .slide { display: none; min-height: calc(100vh - 150px); animation: appear .35s ease; }
+    .slide.active { display: block; }
+    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .eyebrow { color: var(--blue); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { color: var(--navy); font-size: clamp(36px, 6vw, 74px); line-height: 1.04; margin: 17px 0; max-width: 780px; }
+    h2 { color: var(--navy); font-size: clamp(28px, 4vw, 46px); margin: 12px 0; }
+    h3 { color: var(--navy); margin: 0 0 7px; }
+    p { color: var(--muted); line-height: 1.65; margin: 0; }
+    .lead { font-size: 18px; max-width: 690px; }
+    .accent { color: var(--gold); }
+    .hero { align-items: center; display: grid; gap: 48px; grid-template-columns: 1.05fr .95fr; min-height: 70vh; }
+    .hero-mark { align-items: center; background: linear-gradient(145deg, var(--navy), #1f5ca9); border-radius: 28px; box-shadow: var(--shadow); color: white; display: flex; min-height: 390px; overflow: hidden; padding: 42px; position: relative; }
+    .hero-mark:after { border: 1px solid rgba(255,255,255,.17); border-radius: 50%; content: ""; height: 420px; position: absolute; right: -155px; top: -100px; width: 420px; }
+    .hero-mark-content { position: relative; z-index: 1; }
+    .hero-mark .big-number { color: var(--gold); font-size: 110px; font-weight: 800; line-height: .85; }
+    .hero-mark strong { display: block; font-size: 25px; margin-top: 22px; }
+    .hero-mark small { color: #c9dbed; display: block; margin-top: 7px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+    .tag { background: var(--gold-soft); border-radius: 30px; color: #8a5a00; font-size: 12px; font-weight: 700; padding: 8px 12px; }
+    .section-head { align-items: end; display: flex; justify-content: space-between; margin-bottom: 28px; }
+    .section-head p { max-width: 560px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 25px rgba(16,42,67,.04); padding: 24px; }
+    .card .icon { align-items: center; background: var(--blue-soft); border-radius: 12px; color: var(--blue); display: flex; font-size: 22px; height: 46px; justify-content: center; margin-bottom: 18px; width: 46px; }
+    .card p { font-size: 14px; }
+    .numbered { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); margin-top: 28px; }
+    .numbered .card { padding: 20px; }
+    .numbered b { color: var(--gold); display: block; font-size: 30px; margin-bottom: 9px; }
+
+    .demo-shell { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); display: grid; grid-template-columns: 205px 1fr; min-height: 560px; overflow: hidden; }
+    .demo-nav { background: var(--navy-deep); color: #fff; padding: 25px 15px; }
+    .demo-nav .mini-brand { align-items: center; border-bottom: 1px solid rgba(255,255,255,.14); display: flex; gap: 9px; margin-bottom: 20px; padding: 0 8px 20px; }
+    .mini-brand img { background: #fff; border-radius: 6px; height: 27px; object-fit: contain; padding: 3px; width: 27px; }
+    .mini-brand span { font-size: 11px; font-weight: 700; }
+    .nav-item { border-radius: 8px; color: #b4c4d6; cursor: pointer; display: block; font-size: 12px; margin: 4px 0; padding: 11px 12px; }
+    .nav-item.active, .nav-item:hover { background: #214d7b; color: #fff; }
+    .nav-item.active { border-left: 3px solid var(--gold); padding-left: 9px; }
+    .demo-main { background: #f7f9fc; padding: 28px; }
+    .demo-main h3 { font-size: 22px; }
+    .demo-header { align-items: center; display: flex; justify-content: space-between; margin-bottom: 22px; }
+    .admin-chip { align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 9px; display: flex; font-size: 12px; gap: 8px; padding: 7px 10px; }
+    .avatar { align-items: center; background: var(--gold-soft); border-radius: 50%; color: #9a6800; display: flex; font-size: 11px; font-weight: 700; height: 28px; justify-content: center; width: 28px; }
+    .metric-grid { display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); margin-bottom: 20px; }
+    .metric { background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 16px; }
+    .metric small { color: var(--muted); display: block; font-size: 11px; }
+    .metric strong { color: var(--navy); display: block; font-size: 27px; margin-top: 7px; }
+    .metric .up { color: var(--green); font-size: 11px; font-weight: 700; }
+    .request-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .request-card-head { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 16px 18px; }
+    .request-card-head strong { color: var(--navy); font-size: 14px; }
+    .demo-table { border-collapse: collapse; font-size: 12px; width: 100%; }
+    .demo-table th { background: #fbfcfe; color: var(--muted); font-size: 10px; letter-spacing: .07em; padding: 12px 18px; text-align: left; text-transform: uppercase; }
+    .demo-table td { border-top: 1px solid var(--line); padding: 13px 18px; }
+    .status { border-radius: 30px; display: inline-block; font-size: 10px; font-weight: 700; padding: 5px 9px; }
+    .status.pending { background: var(--gold-soft); color: #9a6800; }
+    .status.approved { background: #e6f7f1; color: #087754; }
+    .status.review { background: var(--blue-soft); color: #1f57bb; }
+    .table-action { background: var(--blue); border: 0; border-radius: 6px; color: #fff; cursor: pointer; font-size: 11px; padding: 6px 9px; }
+    .table-action:hover { background: #1d4ed8; }
+    .module-view { display: none; }
+    .module-view.active { display: block; }
+    .module-view > p { font-size: 13px; margin-bottom: 15px; }
+    .toast { background: var(--navy); border-radius: 8px; bottom: 22px; box-shadow: var(--shadow); color: #fff; display: none; font-size: 12px; padding: 12px 15px; position: fixed; right: 22px; z-index: 20; }
+    .toast.show { display: block; animation: appear .2s ease; }
+    .workflow { align-items: center; display: flex; gap: 10px; justify-content: space-between; margin: 30px 0; }
+    .workflow-step { background: #fff; border: 1px solid var(--line); border-radius: 13px; flex: 1; padding: 20px 13px; text-align: center; }
+    .workflow-step b { align-items: center; background: var(--blue-soft); border-radius: 50%; color: var(--blue); display: flex; font-size: 17px; height: 38px; justify-content: center; margin: 0 auto 10px; width: 38px; }
+    .workflow-step span { color: var(--muted); display: block; font-size: 12px; }
+    .arrow { color: var(--gold); font-size: 22px; }
+    .closing { align-items: center; background: linear-gradient(135deg, var(--navy), #1f5ca9); border-radius: 22px; color: #fff; display: flex; justify-content: space-between; min-height: 440px; overflow: hidden; padding: 55px; position: relative; }
+    .closing:after { border: 1px solid rgba(255,255,255,.16); border-radius: 50%; content: ""; height: 650px; position: absolute; right: -230px; top: -180px; width: 650px; }
+    .closing-content { max-width: 650px; position: relative; z-index: 1; }
+    .closing h2 { color: #fff; }
+    .closing p { color: #c9dbed; font-size: 17px; }
+    .closing .tag { background: rgba(245,174,24,.16); color: #ffd670; }
+    .pager { align-items: center; display: flex; gap: 12px; justify-content: center; margin-top: 26px; }
+    .pager button { background: var(--navy); border-color: var(--navy); }
+    .pager button:disabled { cursor: not-allowed; opacity: .35; }
+    .pager span { color: var(--muted); font-size: 12px; min-width: 105px; text-align: center; }
+
+    @media (max-width: 800px) {
+      .top-actions button:first-child { display: none; }
+      .hero, .demo-shell { grid-template-columns: 1fr; }
+      .hero-mark { min-height: 250px; }
+      .grid, .numbered { grid-template-columns: 1fr 1fr; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .demo-nav { display: flex; gap: 5px; overflow-x: auto; padding: 10px; }
+      .demo-nav .mini-brand { border: 0; margin: 0; padding: 8px; }
+      .nav-item { white-space: nowrap; }
+      .workflow { align-items: stretch; flex-direction: column; }
+      .arrow { display: none; }
+      .closing { padding: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="progress"><i id="progress"></i></div>
+    <div class="brand">
+      <img src="../Admin MgtSys presentation-demo/Leo_WorkSuite_Logo.jpg" alt="Leo WorkSuite logo">
+      <div><strong>Leo WorkSuite</strong><span>Admin Management System · Presentation Demo</span></div>
+    </div>
+    <div class="top-actions">
+      <button type="button" id="fullscreenBtn">Full screen</button>
+      <button type="button" id="homeBtn">Start over</button>
+    </div>
+  </header>
+
+  <main class="deck">
+    <section class="slide active" data-title="Welcome">
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Operations, simplified</div>
+          <h1>One place to move every request <span class="accent">forward.</span></h1>
+          <p class="lead">A guided look at the R-II Builders Admin Management System: from the first request to approval, coordination, and completion.</p>
+          <div class="tag-row"><span class="tag">Centralized requests</span><span class="tag">Faster decisions</span><span class="tag">Clear accountability</span></div>
+        </div>
+        <div class="hero-mark">
+          <div class="hero-mark-content"><div class="big-number">01</div><strong>Admin control center</strong><small>Designed for clarity at every step.</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Why it matters">
+      <div class="section-head"><div><div class="eyebrow">The opportunity</div><h2>Turn scattered tasks into a shared workflow.</h2></div><p>Give every team one reliable view of what is requested, what needs action, and what has already been completed.</p></div>
+      <div class="grid">
+        <article class="card"><div class="icon">01</div><h3>Reduce manual follow-up</h3><p>Requests have a visible status and owner, so teams spend less time asking for updates.</p></article>
+        <article class="card"><div class="icon">02</div><h3>Protect the audit trail</h3><p>Key details, decisions, and status changes stay organized in the system instead of scattered across messages.</p></article>
+        <article class="card"><div class="icon">03</div><h3>Coordinate resources</h3><p>Facilities, vehicles, supplies, parking, conference rooms, and other services can be managed from one hub.</p></article>
+      </div>
+      <div class="numbered"><article class="card"><b>01</b><h3>Submit</h3><p>Employees send structured requests.</p></article><article class="card"><b>02</b><h3>Review</h3><p>Admins see the complete context.</p></article><article class="card"><b>03</b><h3>Coordinate</h3><p>Resources and people are assigned.</p></article><article class="card"><b>04</b><h3>Notify</h3><p>Requestors know what happens next.</p></article></div>
+    </section>
+
+    <section class="slide" data-title="Dashboard preview">
+      <div class="section-head"><div><div class="eyebrow">Product walkthrough</div><h2>See the admin dashboard in action.</h2></div><p>Use the left navigation to switch between a few presentation-ready views. The data shown here is sample data only.</p></div>
+      <div class="demo-shell">
+        <nav class="demo-nav" aria-label="Demo dashboard modules">
+          <div class="mini-brand"><img src="../Admin MgtSys presentation-demo/Leo_WorkSuite_Logo.jpg" alt=""><span>ADMIN PORTAL</span></div>
+          <span class="nav-item active" data-module="overview">Overview</span>
+          <span class="nav-item" data-module="requests">Requests</span>
+          <span class="nav-item" data-module="dispatch">Dispatch board</span>
+          <span class="nav-item" data-module="supplies">Supplies</span>
+          <span class="nav-item" data-module="activity">Activity log</span>
+        </nav>
+        <div class="demo-main">
+          <div class="demo-header"><div><h3 id="moduleTitle">Overview</h3><p id="moduleSubtitle">A quick view of today’s operational workload.</p></div><div class="admin-chip"><span class="avatar">AR</span> Admin account</div></div>
+          <div class="module-view active" id="overview">
+            <div class="metric-grid"><div class="metric"><small>Open requests</small><strong>24</strong><span class="up">+8% this week</span></div><div class="metric"><small>Awaiting review</small><strong>08</strong><span class="up">4 due today</span></div><div class="metric"><small>In progress</small><strong>11</strong><span class="up">On schedule</span></div><div class="metric"><small>Completed</small><strong>156</strong><span class="up">+12 this month</span></div></div>
+            <div class="request-card"><div class="request-card-head"><strong>Priority requests</strong><span class="status review">Live sample</span></div><table class="demo-table"><thead><tr><th>Requestor</th><th>Service</th><th>Date</th><th>Status</th><th></th></tr></thead><tbody><tr><td>Maria Santos</td><td>Conference room</td><td>Oct 14</td><td><span class="status pending">Pending</span></td><td><button class="table-action" data-toast="Opening request details">Review</button></td></tr><tr><td>John Dela Cruz</td><td>Vehicle request</td><td>Oct 15</td><td><span class="status approved">Approved</span></td><td><button class="table-action" data-toast="Showing dispatch details">View</button></td></tr><tr><td>Anne Reyes</td><td>Office supplies</td><td>Oct 16</td><td><span class="status review">In review</span></td><td><button class="table-action" data-toast="Opening supplies request">View</button></td></tr></tbody></table></div>
+          </div>
+          <div class="module-view" id="requests"><p>Filter requests by service, date, department, or status, then take action without leaving the queue.</p><div class="request-card"><table class="demo-table"><thead><tr><th>Reference</th><th>Service</th><th>Department</th><th>Requestor</th><th>Status</th></tr></thead><tbody><tr><td>#REQ-1048</td><td>Parking</td><td>Finance</td><td>Maria Santos</td><td><span class="status pending">Pending</span></td></tr><tr><td>#REQ-1047</td><td>Vehicle</td><td>Operations</td><td>John Dela Cruz</td><td><span class="status approved">Approved</span></td></tr><tr><td>#REQ-1046</td><td>Supplies</td><td>HR</td><td>Anne Reyes</td><td><span class="status review">In review</span></td></tr></tbody></table></div></div>
+          <div class="module-view" id="dispatch"><p>Assign drivers and vehicles, coordinate trip details, and keep dispatch status visible to the team.</p><div class="request-card"><table class="demo-table"><thead><tr><th>Trip</th><th>Destination</th><th>Driver</th><th>Vehicle</th><th>Status</th></tr></thead><tbody><tr><td>TRP-2201</td><td>Clark Freeport</td><td>R. Garcia</td><td>Van 02</td><td><span class="status approved">Confirmed</span></td></tr><tr><td>TRP-2202</td><td>Makati office</td><td>Unassigned</td><td>Car 04</td><td><span class="status pending">Needs assignment</span></td></tr></tbody></table></div></div>
+          <div class="module-view" id="supplies"><p>Track requested items and update fulfillment so requestors always have a clear next step.</p><div class="request-card"><table class="demo-table"><thead><tr><th>Reference</th><th>Items</th><th>Department</th><th>Quantity</th><th>Status</th></tr></thead><tbody><tr><td>#SUP-031</td><td>Printer paper, pens</td><td>HR</td><td>12 packs</td><td><span class="status review">For fulfillment</span></td></tr><tr><td>#SUP-030</td><td>Folders, labels</td><td>Admin</td><td>6 boxes</td><td><span class="status approved">Released</span></td></tr></tbody></table></div></div>
+          <div class="module-view" id="activity"><p>Keep a concise record of recent decisions and operational handoffs.</p><div class="request-card"><table class="demo-table"><thead><tr><th>Time</th><th>Activity</th><th>By</th><th>Result</th></tr></thead><tbody><tr><td>09:42 AM</td><td>Vehicle request approved</td><td>Admin</td><td><span class="status approved">Notification sent</span></td></tr><tr><td>09:18 AM</td><td>Driver assigned to TRP-2201</td><td>Admin</td><td><span class="status approved">Saved</span></td></tr><tr><td>08:55 AM</td><td>New supplies request received</td><td>System</td><td><span class="status review">Queued</span></td></tr></tbody></table></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="End-to-end flow">
+      <div class="section-head"><div><div class="eyebrow">How work moves</div><h2>A clearer journey for every request.</h2></div><p>The system connects requestors and administrators with a shared, transparent process.</p></div>
+      <div class="workflow"><div class="workflow-step"><b>1</b><h3>Request</h3><span>Structured details are submitted.</span></div><i class="arrow">→</i><div class="workflow-step"><b>2</b><h3>Review</h3><span>Admin validates the request.</span></div><i class="arrow">→</i><div class="workflow-step"><b>3</b><h3>Assign</h3><span>People and resources are coordinated.</span></div><i class="arrow">→</i><div class="workflow-step"><b>4</b><h3>Notify</h3><span>The requestor sees the update.</span></div></div>
+      <div class="grid"><article class="card"><div class="icon">A</div><h3>Role-aware access</h3><p>Give each user the pages and actions that match their responsibilities.</p></article><article class="card"><div class="icon">B</div><h3>Actionable statuses</h3><p>Pending, approved, in progress, and completed statuses make queues easy to prioritize.</p></article><article class="card"><div class="icon">C</div><h3>Built for operations</h3><p>Support administrative services without forcing every team into the same workflow.</p></article></div>
+    </section>
+
+    <section class="slide" data-title="Next steps">
+      <div class="closing"><div class="closing-content"><div class="eyebrow" style="color:#ffd670">Ready for the next request</div><h2>Less chasing. More completing.</h2><p>The Admin Management System gives R-II Builders a practical foundation for faster service delivery, better visibility, and more confident decisions.</p><div class="tag-row"><span class="tag">Review the workflow</span><span class="tag">Align the teams</span><span class="tag">Measure the impact</span></div></div></div>
+    </section>
+
+    <div class="pager"><button type="button" id="prevBtn">← Previous</button><span id="slideCounter">1 / 5</span><button type="button" id="nextBtn">Next →</button></div>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const progress = document.getElementById("progress");
+    const counter = document.getElementById("slideCounter");
+    let current = 0;
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+      document.getElementById("prevBtn").disabled = current === 0;
+      document.getElementById("nextBtn").disabled = current === slides.length - 1;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => showSlide(current - 1));
+    document.getElementById("nextBtn").addEventListener("click", () => showSlide(current + 1));
+    document.getElementById("homeBtn").addEventListener("click", () => showSlide(0));
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight" || event.key === " ") showSlide(current + 1);
+      if (event.key === "ArrowLeft") showSlide(current - 1);
+      if (event.key.toLowerCase() === "f") document.documentElement.requestFullscreen?.();
+    });
+    document.getElementById("fullscreenBtn").addEventListener("click", () => document.documentElement.requestFullscreen?.());
+
+    const moduleTitles = {
+      overview: ["Overview", "A quick view of today’s operational workload."],
+      requests: ["Requests", "Review and act on the complete request queue."],
+      dispatch: ["Dispatch board", "Coordinate drivers, vehicles, and trip details."],
+      supplies: ["Supplies", "Track items from request to fulfillment."],
+      activity: ["Activity log", "A concise record of recent system activity."]
+    };
+    document.querySelectorAll(".nav-item").forEach(item => item.addEventListener("click", () => {
+      const module = item.dataset.module;
+      document.querySelectorAll(".nav-item").forEach(nav => nav.classList.toggle("active", nav === item));
+      document.querySelectorAll(".module-view").forEach(view => view.classList.toggle("active", view.id === module));
+      document.getElementById("moduleTitle").textContent = moduleTitles[module][0];
+      document.getElementById("moduleSubtitle").textContent = moduleTitles[module][1];
+    }));
+
+    const toast = document.getElementById("toast");
+    document.querySelectorAll("[data-toast]").forEach(button => button.addEventListener("click", () => {
+      toast.textContent = button.dataset.toast;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }));
+    showSlide(0);
+  </script>
+</body>
+</html>
