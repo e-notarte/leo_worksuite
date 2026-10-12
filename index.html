@@ -80,6 +80,10 @@
     .hero-mark small { color: #c9dbed; display: block; margin-top: 7px; }
     .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
     .tag { background: var(--gold-soft); border-radius: 30px; color: #8a5a00; font-size: 12px; font-weight: 700; padding: 8px 12px; }
+    .welcome-points { display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr); margin-top: 28px; max-width: 720px; }
+    .welcome-point { background: rgba(255,255,255,.72); border: 1px solid var(--line); border-radius: 11px; padding: 13px; }
+    .welcome-point strong { color: var(--navy); display: block; font-size: 13px; margin-bottom: 4px; }
+    .welcome-point span { color: var(--muted); display: block; font-size: 12px; line-height: 1.45; }
     .section-head { align-items: end; display: flex; justify-content: space-between; margin-bottom: 28px; }
     .section-head p { max-width: 560px; }
     .grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
@@ -146,6 +150,7 @@
       .hero, .demo-shell { grid-template-columns: 1fr; }
       .hero-mark { min-height: 250px; }
       .grid, .numbered { grid-template-columns: 1fr 1fr; }
+      .welcome-points { grid-template-columns: 1fr; }
       .metric-grid { grid-template-columns: 1fr 1fr; }
       .demo-nav { display: flex; gap: 5px; overflow-x: auto; padding: 10px; }
       .demo-nav .mini-brand { border: 0; margin: 0; padding: 8px; }
@@ -173,10 +178,15 @@
     <section class="slide active" data-title="Welcome">
       <div class="hero">
         <div>
-          <div class="eyebrow">Operations, simplified</div>
-          <h1>One place to move every request <span class="accent">forward.</span></h1>
-          <p class="lead">A guided look at the R-II Builders Admin Management System: from the first request to approval, coordination, and completion.</p>
+          <div class="eyebrow">Welcome to Leo WorkSuite</div>
+          <h1>Make every business request <span class="accent">easier to manage.</span></h1>
+          <p class="lead">Leo WorkSuite is an admin management system that brings requests, approvals, people, and resources into one clear workspace. It helps teams move work from submission to completion with less follow-up and better visibility.</p>
           <div class="tag-row"><span class="tag">Centralized requests</span><span class="tag">Faster decisions</span><span class="tag">Clear accountability</span></div>
+          <div class="welcome-points">
+            <div class="welcome-point"><strong>1. Submit</strong><span>Employees send complete, structured requests.</span></div>
+            <div class="welcome-point"><strong>2. Coordinate</strong><span>Admins review, assign, and track the work.</span></div>
+            <div class="welcome-point"><strong>3. Complete</strong><span>Teams receive updates and close the loop.</span></div>
+          </div>
         </div>
         <div class="hero-mark">
           <div class="hero-mark-content"><div class="big-number">01</div><strong>Admin control center</strong><small>Designed for clarity at every step.</small></div>
